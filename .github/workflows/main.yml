@@ -7,5 +7,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Testing clickhouse db action
-        uses: ./ # Uses an action in the root directory
+
+      - name: Installing Minikube
+        run: make install
+
+      - name: Installing clickhouse db
+        run: make start
+
+      - name: Fetch clickhouse db http url
+        run: |
+          echo "minikube_url=$(minikube service ch-lb --url)" 
+          echo "MINIKUBE_IP=$(minikube ip)" >> $GITHUB_ENV
+          echo "NODE_PORT=$(kubectl get service ch-lb --output='jsonpath={.spec.ports[0].nodePort}')" >> $GITHUB_ENV 
+      
+      - name: Check access to the clickhouse db url via curl
+        run: |
+          kubectl get svc 
+          echo "Starting curl to $NODE_URL:$NODE_PORT"
+          echo "PING_STATUS=$(curl -s $NODE_URL:$NODE_PORT/ping)"
+          echo "GET_STATUS=$(curl -s $NODE_URL:$NODE_PORT/)"
+          echo "GET_SELECT=$(curl -s $NODE_URL:$NODE_PORT/?query=SELECT%201)"
+        env:
+          NODE_URL: http://ch:ch-123456789@${{ env.MINIKUBE_IP }}
+          NODE_PORT: ${{ env.NODE_PORT }}

@@ -55,7 +55,3 @@ echo "Result: $(curl -s http://ch:ch-123456789@$NODE_IP:$NODE_PORT/?query=SELECT
 echo "======================================================================"
 echo "SIGNAL_CLICKHOUSE_URL: http://ch:ch-123456789@$NODE_IP:$NODE_PORT/"
 echo "======================================================================"
-
-# view logs
-
-minikube kubectl -- logs -f chi-ch-cluster-clickhouse-cp-0-0-0 -c clickhouse-pod
