@@ -46,12 +46,12 @@ done
 echo "ClickHouse and Zookeeper are up."
 
 # Check ClickHouse is working
-export SIGNAL_CLICKHOUSE_URL=$(minikube service ch-lb --url | head -n 1)
+export CLICKHOUSE_URL=$(minikube service ch-lb --url | head -n 1)
 export NODE_PORT=$(kubectl get service ch-lb --output='jsonpath={.spec.ports[0].nodePort}')
 export NODE_IP=$(minikube ip)
 echo "Running healthcheck for ClickHouse..."
 echo "Checking: http://ch:ch-123456789@$NODE_IP:$NODE_PORT/?query=SELECT%201..."
 echo "Result: $(curl -s http://ch:ch-123456789@$NODE_IP:$NODE_PORT/?query=SELECT%201)"
 echo "======================================================================"
-echo "SIGNAL_CLICKHOUSE_URL: http://ch:ch-123456789@$NODE_IP:$NODE_PORT/"
+echo "CLICKHOUSE_URL: http://ch:ch-123456789@$NODE_IP:$NODE_PORT/"
 echo "======================================================================"
