@@ -33,7 +33,7 @@ minikube kubectl -- get svc -n zk
 minikube kubectl -- apply -f ./clickhouse-operator-install.yaml
 
 # Install clickhouse-db
-minikube kubectl -- apply -f ./develop-cluster.yaml
+minikube kubectl -- apply -f ./ch-cluster.yaml
 
 # Wait for the clickhouse-db cluster to up
 echo "Waiting for ClickHouse and Zookeeper to bootup..."
