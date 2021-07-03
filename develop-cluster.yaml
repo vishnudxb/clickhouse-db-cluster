@@ -1,0 +1,82 @@
+apiVersion: clickhouse.altinity.com/v1
+kind: ClickHouseInstallation
+metadata:
+  name: "ch-cluster"
+spec:
+  stop: "no"
+  templating:
+    policy: "manual"
+  reconciling:
+    policy: "nowait"
+  defaults:
+    templates:
+      podTemplate: default-pod-template
+      serviceTemplate: svc-template
+      dataVolumeClaimTemplate: data-volume-template
+      logVolumeClaimTemplate: log-volume-template 
+  configuration:
+    zookeeper:
+      nodes:
+        - host: zookeeper.zk.svc.cluster.local
+          port: 2181
+    users:
+      ch/password: ch-123456789
+      ch/profile: default
+      ch/quota: default
+      ch/networks/ip:
+        - "::/0"
+    clusters:
+      - name: clickhouse-cp
+        templates:
+          dataVolumeClaimTemplate: data-volume-template
+          logVolumeClaimTemplate: log-volume-template          
+          podTemplate: default-pod-template
+          serviceTemplate: svc-template
+        zookeeper:
+          nodes:
+            - host: zookeeper.zk.svc.cluster.local
+        layout:
+          shardsCount: 2
+          replicasCount: 2
+  templates:
+    podTemplates:
+      - name: default-pod-template
+        spec:
+          containers:
+            - name: clickhouse-pod
+              image: yandex/clickhouse-server:21.6
+              ports:
+                - name: http
+                  containerPort: 8123
+                - name: client
+                  containerPort: 9000
+                - name: interserver
+                  containerPort: 9009
+    volumeClaimTemplates:
+      - name: data-volume-template
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+      - name: log-volume-template
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 100Mi
+    serviceTemplates:
+      - name: svc-template
+        generateName: ch-lb
+        metadata:
+          labels:
+            custom.label: "custom.value"
+        spec:
+          ports:
+            - name: http
+              port: 8123
+            - name: tcp
+              port: 9000
+          type: NodePort
