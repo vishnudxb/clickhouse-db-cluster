@@ -1,6 +1,6 @@
 # clickhouse-db-cluster github action
 
-A github action to run clickhouse db cluster 2 shards / 2 replica with ZooKeeper.
+A github action to run clickhouse db with 2 shards / 2 replica with ZooKeeper.
 
 To setup a local cluster for development purposes, please run the following:
 
